@@ -17,6 +17,12 @@ public class SeedworkAI : ModuleRules
         [
             "CoreUObject",
             "Engine",
+            "AIModule",
+            "GameplayTags",
+            "GameplayTasks",
+            "GameplayAbilities",
+
+            "SeedworkRandom"
         ]);
     }
 }
