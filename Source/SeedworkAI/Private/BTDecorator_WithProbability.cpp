@@ -19,5 +19,5 @@ bool UBTDecorator_WithProbability::CalculateRawConditionValue(UBehaviorTreeCompo
 
 FString UBTDecorator_WithProbability::GetStaticDescription() const
 {
-    return FString::Printf(TEXT("%s of %s"), *Super::GetStaticDescription(), *FString::SanitizeFloat(Probability));
+    return FString::Printf(TEXT("%s: %.0f%%"), *Super::GetStaticDescription(), Probability * 100.0);
 }

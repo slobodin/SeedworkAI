@@ -19,10 +19,10 @@ class SEEDWORKAI_API UBTTask_ActivateAbility : public UBTTaskNode
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, Category = "CONFIG")
+    UPROPERTY(EditAnywhere)
     TSubclassOf<UGameplayAbility> AbilityClass;
 
-    UPROPERTY(EditAnywhere, Category = "CONFIG")
+    UPROPERTY(EditAnywhere)
     bool CancelAbilityOnTaskAbort = false;
 
     UBTTask_ActivateAbility();

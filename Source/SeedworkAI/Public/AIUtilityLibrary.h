@@ -5,6 +5,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AIUtilityLibrary.generated.h"
 
+class AActor;
 class APawn;
 class UBehaviorTree;
 

@@ -26,12 +26,12 @@ FName UBTDecorator_TimeLimitEx::GetNodeIconName() const
 void UBTDecorator_TimeLimitEx::OnNodeActivation(FBehaviorTreeSearchData& SearchData)
 {
     uint8* RawMemory = SearchData.OwnerComp.GetNodeMemory(this, SearchData.OwnerComp.FindInstanceContainingNode(this));
-    if (RawMemory)
-    {
-        FBTAuxiliaryMemory* DecoratorMemory = GetSpecialNodeMemory<FBTAuxiliaryMemory>(RawMemory);
-        DecoratorMemory->NextTickRemainingTime = URandom::Shared()->DoubleInRange(TimeLimitMin, TimeLimitMax);
-        DecoratorMemory->AccumulatedDeltaTime = 0.0f;
-    }
+
+    check(RawMemory);
+
+    FBTAuxiliaryMemory* DecoratorMemory = GetSpecialNodeMemory<FBTAuxiliaryMemory>(RawMemory);
+    DecoratorMemory->NextTickRemainingTime = URandom::Shared()->DoubleInRange(TimeLimitMin, TimeLimitMax);
+    DecoratorMemory->AccumulatedDeltaTime = 0.0f;
 }
 
 void UBTDecorator_TimeLimitEx::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)

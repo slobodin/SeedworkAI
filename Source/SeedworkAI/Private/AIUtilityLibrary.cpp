@@ -144,6 +144,7 @@ void UAIUtilityLibrary::StartBehaviour(APawn* pawn, UBehaviorTree* newBehaviour)
     if (!IsValid(pawn))
     {
         ensure(false);
+        return;
     }
 
     unimplemented();

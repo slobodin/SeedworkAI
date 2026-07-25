@@ -13,10 +13,10 @@ class SEEDWORKAI_API UBTDecorator_TimeLimitEx : public UBTDecorator
 public:
     UBTDecorator_TimeLimitEx();
 
-    UPROPERTY(Category = Decorator, EditAnywhere)
+    UPROPERTY(EditAnywhere)
     double TimeLimitMin = 2.0;
 
-    UPROPERTY(Category = Decorator, EditAnywhere)
+    UPROPERTY(EditAnywhere)
     double TimeLimitMax = 5.0;
 
 #if WITH_EDITOR

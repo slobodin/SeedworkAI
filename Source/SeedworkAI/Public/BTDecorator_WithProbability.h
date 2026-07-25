@@ -14,7 +14,7 @@ class SEEDWORKAI_API UBTDecorator_WithProbability : public UBTDecorator
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0"))
     double Probability = 0.5;
 
     UBTDecorator_WithProbability();
