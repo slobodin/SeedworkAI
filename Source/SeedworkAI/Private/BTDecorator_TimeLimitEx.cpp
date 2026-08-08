@@ -30,7 +30,7 @@ void UBTDecorator_TimeLimitEx::OnNodeActivation(FBehaviorTreeSearchData& SearchD
     check(RawMemory);
 
     FBTAuxiliaryMemory* DecoratorMemory = GetSpecialNodeMemory<FBTAuxiliaryMemory>(RawMemory);
-    DecoratorMemory->NextTickRemainingTime = URandom::Shared()->DoubleInRange(TimeLimitMin, TimeLimitMax);
+    DecoratorMemory->NextTickRemainingTime = URandom::Shared().DoubleInRange(TimeLimitMin, TimeLimitMax);
     DecoratorMemory->AccumulatedDeltaTime = 0.0f;
 }
 

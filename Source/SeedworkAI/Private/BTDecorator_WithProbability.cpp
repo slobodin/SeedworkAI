@@ -14,7 +14,7 @@ UBTDecorator_WithProbability::UBTDecorator_WithProbability()
 
 bool UBTDecorator_WithProbability::CalculateRawConditionValue(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory) const
 {
-    return URandom::Shared()->BoolWithWeight(Probability);
+    return URandom::Shared().BoolWithWeight(Probability);
 }
 
 FString UBTDecorator_WithProbability::GetStaticDescription() const
