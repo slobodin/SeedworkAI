@@ -8,6 +8,62 @@
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
 
+/*
+FIXME: Bugs?
+
+BTTask_ActivateAbility.cpp — this file has the most serious problems
+
+
+2. OnAbilityEnded is never unbound
+It's bound in ExecuteTask (line 46) and the only removal is RemoveAll(this) at the start of the next ExecuteTask.
+So after the task succeeds or aborts, the node instance stays subscribed to the ASC.
+Concrete failure: task aborts with CancelAbilityOnTaskAbort = false → the ability keeps running → it ends 3 seconds later → HandleAbilityEnded fires and
+calls FinishLatentTask(Succeeded) on a node that is no longer executing. That corrupts BT execution state.
+
+3. AbortTask finishes the task as Succeeded while aborting
+asc->CancelAbilityHandle(SpecHandle);   // broadcasts OnAbilityEnded synchronously
+...
+return Super::AbortTask(...);           // returns Aborted
+CancelAbilityHandle broadcasts OnAbilityEnded inline, so HandleAbilityEnded runs before AbortTask returns and calls FinishLatentTask(*MyOwnerComp, Succeeded) mid - abort.Unbind before cancelling.
+
+4. Instantly - ending abilities hang the task forever
+TryActivateAbility(line 41) can activate and end an ability entirely inside the call — that's the normal path for instant/GameplayAbilitys with no async tasks. OnAbilityEnded has already broadcast by the time you bind at line 46, so the task returns InProgress and never finishes. Bind the delegate and set SpecHandle before TryActivateAbility.
+
+5. HandleAbilityEnded ignores cancellation and deref's MyOwnerComp unchecked
+endedData.bWasCancelled is never consulted — a cancelled ability reports Succeeded.And * MyOwnerComp(line 75) has no IsValid guard.
+
+A shape that fixes 1–5:
+EBTNodeResult::Type UBTTask_ActivateAbility::ExecuteTask(UBehaviorTreeComponent & ownerComp, uint8 * nodeMemory)
+{
+    AAIController* controller = ownerComp.GetAIOwner();
+    APawn* myPawn = controller ? controller->GetPawn() : nullptr;
+    if (!IsValid(myPawn) || !AbilityClass)
+    {
+        return EBTNodeResult::Failed;
+    }
+
+
+
+    MyOwnerComp = &ownerComp;
+    SpecHandle = spec->Handle;
+    bFinished = false;
+
+    asc->OnAbilityEnded.RemoveAll(this);
+    asc->OnAbilityEnded.AddUObject(this, &UBTTask_ActivateAbility::HandleAbilityEnded);
+
+    if (!asc->TryActivateAbility(SpecHandle))
+    {
+        Unbind(asc);
+        return EBTNodeResult::Failed;
+    }
+
+    // ability may have already completed synchronously inside TryActivateAbility
+    return bFinished ? LatentResult : EBTNodeResult::InProgress;
+}
+with Unbind() called from HandleAbilityEnded, AbortTask(before CancelAbilityHandle), and OnTaskFinished.
+
+*/
+
 UBTTask_ActivateAbility::UBTTask_ActivateAbility()
 {
     NodeName = "Activate Ability";
@@ -18,6 +74,8 @@ UBTTask_ActivateAbility::UBTTask_ActivateAbility()
 
 EBTNodeResult::Type UBTTask_ActivateAbility::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
 {
+    checkf(false, TEXT("Review the above FIXME comments before using this code"));
+
     APawn* myPawn = ownerComp.GetAIOwner()->GetPawn();
 
     if (!IsValid(myPawn))
@@ -26,8 +84,8 @@ EBTNodeResult::Type UBTTask_ActivateAbility::ExecuteTask(UBehaviorTreeComponent&
     }
 
     auto asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(myPawn);
-
-    if (!asc)
+    FGameplayAbilitySpec* spec = asc ? asc->FindAbilitySpecFromClass(AbilityClass) : nullptr;
+    if (!spec)
     {
         return EBTNodeResult::Failed;
     }
@@ -36,17 +94,14 @@ EBTNodeResult::Type UBTTask_ActivateAbility::ExecuteTask(UBehaviorTreeComponent&
 
     bool activated = false;
 
-    if (auto spec = asc->FindAbilitySpecFromClass(AbilityClass))
+    if (asc->TryActivateAbility(spec->Handle))
     {
-        if (asc->TryActivateAbility(spec->Handle))
-        {
-            SpecHandle = spec->Handle;
+        SpecHandle = spec->Handle;
 
-            asc->OnAbilityEnded.RemoveAll(this);
-            asc->OnAbilityEnded.AddUObject(this, &UBTTask_ActivateAbility::HandleAbilityEnded);
+        asc->OnAbilityEnded.RemoveAll(this);
+        asc->OnAbilityEnded.AddUObject(this, &UBTTask_ActivateAbility::HandleAbilityEnded);
 
-            activated = true;
-        }
+        activated = true;
     }
 
     return activated ? EBTNodeResult::InProgress : EBTNodeResult::Failed;
