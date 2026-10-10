@@ -3,18 +3,19 @@
 #include "BotCreationComponent.h"
 #include "AIController.h"
 #include "Engine/World.h"
-
-// HACK to access GenericPlayerInitialization
-#define protected public
 #include "GameFramework/GameModeBase.h"
-#undef protected
-
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "SeedworkRandom.h"
 
 namespace
 {
+    // Bots must go through GenericPlayerInitialization but the function is protected, need to access it.
+    struct FGameModeAccess : AGameModeBase
+    {
+        using AGameModeBase::GenericPlayerInitialization;
+    };
+
     FString CreateBotName(int32 idx)
     {
         return FString::Printf(TEXT("Tinplate_%d"), idx);
@@ -55,7 +56,7 @@ void UBotCreationComponent::SpawnOneBot()
 
     auto gm = GetWorld()->GetAuthGameMode();
 
-    gm->GenericPlayerInitialization(botController);
+    (gm->*&FGameModeAccess::GenericPlayerInitialization)(botController);
 
     // TODO: restart player based on input param.
     gm->RestartPlayer(botController);
