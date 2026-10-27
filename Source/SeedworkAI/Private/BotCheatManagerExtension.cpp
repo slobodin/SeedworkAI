@@ -20,14 +20,15 @@ UBotCheatManagerExtension::UBotCheatManagerExtension()
 #endif
 }
 
-void UBotCheatManagerExtension::AddBot()
+AAIController* UBotCheatManagerExtension::AddBot()
 {
 #if WITH_SERVER_CODE && UE_WITH_CHEAT_MANAGER
     if (auto botComponent = GetBotComponent())
     {
-        botComponent->Cheat_AddBot();
+        return botComponent->Cheat_AddBot();
     }
 #endif
+    return nullptr;
 }
 
 void UBotCheatManagerExtension::RemoveBot()

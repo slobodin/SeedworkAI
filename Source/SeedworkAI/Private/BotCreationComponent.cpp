@@ -29,7 +29,7 @@ UBotCreationComponent::UBotCreationComponent()
 
 #if WITH_SERVER_CODE
 
-void UBotCreationComponent::SpawnOneBot()
+AAIController* UBotCreationComponent::SpawnOneBot()
 {
     int32 idx = URandom::Shared().IntegerInRange(1, 100);
 

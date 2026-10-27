@@ -5,6 +5,7 @@
 #include "GameFramework/CheatManager.h"
 #include "BotCheatManagerExtension.generated.h"
 
+class AAIController;
 class UBotCreationComponent;
 
 /** Cheats related to bots */
@@ -18,7 +19,7 @@ public:
 
     // Adds a bot player
     UFUNCTION(Exec, BlueprintAuthorityOnly)
-    void AddBot();
+    AAIController* AddBot();
 
     // Removes a bot player
     UFUNCTION(Exec, BlueprintAuthorityOnly)

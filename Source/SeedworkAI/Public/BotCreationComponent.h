@@ -17,14 +17,14 @@ public:
 
     /** Always creates a single bot. */
     UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
-    virtual void SpawnOneBot();
+    virtual AAIController* SpawnOneBot();
 
     /** Deletes the last created bot if possible.. */
     UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
     virtual void RemoveOneBot();
 
 #if WITH_SERVER_CODE
-    void Cheat_AddBot() { SpawnOneBot(); }
+    AAIController* Cheat_AddBot() { return SpawnOneBot(); }
     void Cheat_RemoveBot() { RemoveOneBot(); }
 #endif
 
