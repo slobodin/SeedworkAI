@@ -6,7 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
-#include "SeedworkRandom.h"
+#include "Random.h"
 
 namespace
 {
