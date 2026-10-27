@@ -41,6 +41,16 @@ void UBotCheatManagerExtension::RemoveBot()
 #endif
 }
 
+void UBotCheatManagerExtension::RemoveSpecificBot(AAIController* bot)
+{
+#if WITH_SERVER_CODE && UE_WITH_CHEAT_MANAGER
+    if (auto botComponent = GetBotComponent())
+    {
+        botComponent->Cheat_RemoveBot(bot);
+    }
+#endif
+}
+
 UBotCreationComponent* UBotCheatManagerExtension::GetBotComponent() const
 {
     if (UWorld* world = GetWorld())

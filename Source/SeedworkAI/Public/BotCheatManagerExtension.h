@@ -25,6 +25,9 @@ public:
     UFUNCTION(Exec, BlueprintAuthorityOnly)
     void RemoveBot();
 
+    // Removes the given bot player
+    void RemoveSpecificBot(AAIController* bot);
+
 private:
     UBotCreationComponent* GetBotComponent() const;
 };

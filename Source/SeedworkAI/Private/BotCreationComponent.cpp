@@ -70,31 +70,40 @@ void UBotCreationComponent::RemoveOneBot()
     if (SpawnedBotList.Num() > 0)
     {
         const int32 botToRemoveIndex = FMath::RandRange(0, SpawnedBotList.Num() - 1);
-
-        AAIController* botToRemove = SpawnedBotList[botToRemoveIndex];
-        SpawnedBotList.RemoveAtSwap(botToRemoveIndex);
-
-        if (botToRemove)
-        {
-            if (auto controlledPawn = botToRemove->GetPawn())
-            {
-                controlledPawn->Destroy();
-            }
-
-            // Destroy the controller (will cause it to Logout, etc...)
-            botToRemove->Destroy();
-        }
+        RemoveBot(SpawnedBotList[botToRemoveIndex]);
     }
+}
+
+void UBotCreationComponent::RemoveBot(AAIController* bot)
+{
+    if (SpawnedBotList.RemoveSwap(bot) == 0 || !bot)
+    {
+        return;
+    }
+
+    if (auto controlledPawn = bot->GetPawn())
+    {
+        controlledPawn->Destroy();
+    }
+
+    // Destroy the controller (will cause it to Logout, etc...)
+    bot->Destroy();
 }
 
 #else
 
-void UBotCreationComponent::SpawnOneBot()
+AAIController* UBotCreationComponent::SpawnOneBot()
+{
+    checkNoEntry();
+    return nullptr;
+}
+
+void UBotCreationComponent::RemoveOneBot()
 {
     checkNoEntry();
 }
 
-void UBotCreationComponent::RemoveOneBot()
+void UBotCreationComponent::RemoveBot(AAIController* bot)
 {
     checkNoEntry();
 }
