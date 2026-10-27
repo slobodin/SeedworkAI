@@ -10,7 +10,7 @@ class UBotCreationComponent;
 
 /** Cheats related to bots */
 UCLASS(NotBlueprintable)
-class UBotCheatManagerExtension final : public UCheatManagerExtension
+class SEEDWORKAI_API UBotCheatManagerExtension final : public UCheatManagerExtension
 {
     GENERATED_BODY()
 
