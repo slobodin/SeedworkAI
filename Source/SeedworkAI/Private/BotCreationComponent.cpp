@@ -62,6 +62,7 @@ AAIController* UBotCreationComponent::SpawnOneBot()
     gm->RestartPlayer(botController);
 
     SpawnedBotList.Add(botController);
+    return botController;
 }
 
 void UBotCreationComponent::RemoveOneBot()
