@@ -39,7 +39,7 @@ AAIController* UBotCreationComponent::SpawnOneBot()
     spawnInfo.ObjectFlags |= RF_Transient;
     spawnInfo.NameMode = FActorSpawnParameters::ESpawnActorNameMode::Requested;
     spawnInfo.Name = *FString::Printf(TEXT("BotController_%d"), idx);
-    spawnInfo.CustomPreSpawnInitalization = [](AActor* actor)
+    spawnInfo.CustomPreSpawnInitialization = [](AActor* actor)
     {
         // TODO: custom initialization if required.
         // CastChecked<ANPCAIController>(actor)->BackendPlayerId = botData.PlayerId;
